@@ -82,6 +82,13 @@ function handleTick(e) {
     updateMoney();
     updateBet();
     updatePaid();
+
+    if (playerBet > playerMoney) {
+        disableSpinButton();
+    } else {
+        enableSpinButton();
+    }
+
     stage.update();
 }
 
@@ -91,6 +98,7 @@ function start() {
     initMoney();
 
     initSpinButton();
+    initNoSpinButton();
     initResetButton();
     initPayButton();
     initBetMinusButton();
@@ -139,18 +147,28 @@ function initMoney() {
     stage.addChild(money, bet, paid, headline);
 }
 
+var spinButton;
+var noSpinButton;
 function initSpinButton() {
     var spinImage = 'img/spin.png';
-    var spinButton = new createjs.Bitmap(spinImage);
+    spinButton = new createjs.Bitmap(spinImage);
     spinButton.x = SPIN.X;
     spinButton.y = SPIN.Y;
     spinButton.addEventListener("click", handleClickSpin);
     function handleClickSpin(event) {
         spinResult = spinReels();
         console.log(spinResult[0] + ' ' + spinResult[1] + ' ' + spinResult[2]);
+        determineWinnings();
     }
 
-    stage.addChild(spinButton);
+    //stage.addChild(spinButton);
+}
+
+function initNoSpinButton() {
+    var noSpinImage = 'img/noSpin.png';
+    noSpinButton = new createjs.Bitmap(noSpinImage);
+    noSpinButton.x = SPIN.X;
+    noSpinButton.y = SPIN.Y;
 }
 
 function initResetButton() {
@@ -173,7 +191,10 @@ function initPayButton() {
     payButton.y = PAY_TABLE.Y;
     payButton.addEventListener("click", handleClickPay);
     function handleClickPay(event) {
-        console.log('pay');
+        var leave = confirm("Are you sure you wish to cash out and leave this HOT slot machine?");
+        if (leave) {
+            window.close();
+        }
     }
 
     stage.addChild(payButton);
@@ -239,6 +260,17 @@ function updatePaid() {
     paid.text = paidStr + winnings.toString();
 }
 
+function disableSpinButton() {
+    //spinButton.removeAllEventListeners();
+    stage.removeChild(spinButton);
+    stage.addChild(noSpinButton);
+}
+
+function enableSpinButton() {
+    stage.removeChild(noSpinButton);
+    stage.addChild(spinButton);
+}
+
 
 //functions for slotmachine
 var grapes = 0;
@@ -264,26 +296,16 @@ var jackpot = 5000;
 var playerBet = MIN_BET;
 
 function resetAll() {
+    spinResult = ["seven", "seven", "seven"];
     playerMoney = 1000;
     winnings = 0;
-    jackpot = 5000;
+    //jackpot = 5000;
     playerBet = MIN_BET;
 }
 
 
 /* When this function is called it determines the betLine results. */
 //e.g. Bar - Orange - Banana
-function betString() {
-    moneyStr = '';
-    for (var i = 0; i < MAX_MONEY_STRING_LENGTH - playerMoney.toString().length; i++) {
-        moneyStr += '0';
-    }
-    moneyStr += playerMoney;
-
-    return moneyStr;
-}
-
-
 function spinReels() {
     var betLine = [" ", " ", " "];
     var outCome = [0, 0, 0];
@@ -347,5 +369,81 @@ function checkRange(value, lowerBounds, upperBounds) {
     }
     else {
         return !value;
+    }
+}
+
+/* This function calculates the player's winnings, if any */
+function determineWinnings() {
+    winnings = 0;
+    if (blanks == 0) {
+        if (grapes == 3) {
+            winnings = playerBet * 10;
+        }
+        else if (bananas == 3) {
+            winnings = playerBet * 20;
+        }
+        else if (oranges == 3) {
+            winnings = playerBet * 30;
+        }
+        else if (cherries == 3) {
+            winnings = playerBet * 40;
+        }
+        else if (bars == 3) {
+            winnings = playerBet * 50;
+        }
+        else if (bells == 3) {
+            winnings = playerBet * 75;
+        }
+        else if (sevens == 3) {
+            winnings = playerBet * 100;
+        }
+        else if (grapes == 2) {
+            winnings = playerBet * 2;
+        }
+        else if (bananas == 2) {
+            winnings = playerBet * 2;
+        }
+        else if (oranges == 2) {
+            winnings = playerBet * 3;
+        }
+        else if (cherries == 2) {
+            winnings = playerBet * 4;
+        }
+        else if (bars == 2) {
+            winnings = playerBet * 5;
+        }
+        else if (bells == 2) {
+            winnings = playerBet * 10;
+        }
+        else if (sevens == 2) {
+            winnings = playerBet * 20;
+        }
+        else if (sevens == 1) {
+            winnings = playerBet * 5;
+        }
+        else {
+            winnings = playerBet * 1;
+        }
+        playerMoney += winnings;
+        resetFruitTally();
+        checkJackPot();
+    }
+    else {
+        playerMoney -= playerBet;
+        jackpot += playerBet;
+        resetFruitTally();
+    }
+
+}
+
+/* Check to see if the player won the jackpot */
+function checkJackPot() {
+    /* compare two random values */
+    var jackPotTry = Math.floor(Math.random() * 51 + 1);
+    var jackPotWin = Math.floor(Math.random() * 51 + 1);
+    if (jackPotTry == jackPotWin) {
+        alert("You Won the $" + jackpot + " Jackpot!!");
+        playerMoney += jackpot;
+        jackpot = 5000;
     }
 }

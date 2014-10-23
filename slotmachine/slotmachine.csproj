@@ -59,12 +59,14 @@
   <ItemGroup>
     <Content Include="img\betAdd.png" />
     <Content Include="img\betMinus.png" />
+    <Content Include="img\noSpin.png" />
     <Content Include="img\payTable.png" />
     <Content Include="img\reset.png" />
     <Content Include="img\slotmachine.png" />
     <Content Include="img\reel_icons.jpg" />
     <Content Include="img\spin.png" />
-    <Content Include="index.bak.html" />
+    <Content Include="img\vegas_downtown.jpg" />
+    <Content Include="index.html" />
     <Content Include="js\createjs-2013.12.12.min.js" />
     <Content Include="js\slotmachine.js" />
     <Content Include="packages.config" />
@@ -77,7 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="css\main.css" />
-    <Content Include="index.html" />
+    <Content Include="slotmachine.html" />
     <Content Include="js\jquery.js" />
     <Content Include="js\main.js" />
     <Content Include="Web.config" />
