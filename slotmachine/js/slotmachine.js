@@ -11,6 +11,17 @@ var REEL1 = { X: 56, Y: 132 };
 var REEL2 = { X: 161, Y: 132 };
 var REEL3 = { X: 266, Y: 132 };
 
+//text locations
+var MONEY = { X: 40, Y: 250 };
+var BET = { X: 175, Y: 250 };
+var PAID = { X: 250, Y: 250 };
+var HEADLINE = { X: 60, Y: 280 };
+
+//text items
+var money;
+var bet;
+var paid;
+
 //image locations on spritesheet
 var SEVEN = { X: 0, Y: 0 };
 var BLANK = { X: 95, Y: 0 };
@@ -67,12 +78,17 @@ function init() {
 function handleTick(e) {
     //update method
     updateReels();
+
+    updateMoney();
+    updateBet();
+    updatePaid();
     stage.update();
 }
 
 function start() {
     initSlotmachine();
     initReels();
+    initMoney();
 
     initSpinButton();
     initResetButton();
@@ -101,6 +117,26 @@ function initReels() {
     reel3Result.x = REEL3.X;
     reel3Result.y = REEL3.Y;
     stage.addChild(reel1Result, reel2Result, reel3Result);
+}
+
+function initMoney() {
+    money = new createjs.Text('00000000', 'bold 25px Courier New', '#ff7700');
+    money.x = MONEY.X;
+    money.y = MONEY.Y;
+
+    paid = new createjs.Text('00000000', 'bold 25px Courier New', '#ff7700');
+    paid.x = PAID.X;
+    paid.y = PAID.Y;
+
+    headline = new createjs.Text('Credits    Bet   Winnings', 'bold 20px Courier New', '#ffffff');
+    headline.x = HEADLINE.X;
+    headline.y = HEADLINE.Y;
+
+    bet = new createjs.Text('0000', 'bold 25px Courier New', '#ff7700');
+    bet.x = BET.X;
+    bet.y = BET.Y;
+
+    stage.addChild(money, bet, paid, headline);
 }
 
 function initSpinButton() {
@@ -150,7 +186,9 @@ function initBetMinusButton() {
     betMinusButton.y = BET_MINUS.Y;
     betMinusButton.addEventListener("click", handleClickBetMinus);
     function handleClickBetMinus(event) {
-        console.log('betMinus');
+        if (playerBet > MIN_BET) {
+            playerBet -= MIN_BET;
+        }
     }
 
     stage.addChild(betMinusButton);
@@ -163,7 +201,9 @@ function initBetAddButton() {
     betAddButton.y = BET_ADD.Y;
     betAddButton.addEventListener("click", handleClickBetAdd);
     function handleClickBetAdd(event) {
-        console.log('betAdd');
+        if (playerBet < MAX_BET) {
+            playerBet += MIN_BET;
+        }
     }
 
     stage.addChild(betAddButton);
@@ -186,8 +226,55 @@ var bars = 0;
 var lemons = 0;
 var sevens = 0;
 var blanks = 0;
+
+var MAX_MONEY_STRING_LENGTH = 8;
+var MAX_PAID_STRING_LENGTH = 8;
+var MAX_BET_STRING_LENGTH = 4;
+
+var MAX_BET = 1000;
+var MIN_BET = 10;
+var BET_INCREMENT = 10;
+
+var playerMoney = 1000;
+var winnings = 0;
+var jackpot = 5000;
+var playerBet = MIN_BET;
+
+function updateMoney() {
+    moneyStr = '';
+    for (var i = 0; i < MAX_MONEY_STRING_LENGTH - playerMoney.toString().length; i++) {
+        moneyStr += '0';
+    }
+    money.text = moneyStr + playerMoney.toString();
+}
+
+function updateBet() {
+    betStr = '';
+    for (var i = 0; i < MAX_BET_STRING_LENGTH - playerBet.toString().length; i++) {
+        betStr += '0';
+    }
+    bet.text = betStr + playerBet.toString();
+}
+
+function updatePaid() {
+    paidStr = '';
+    for (var i = 0; i < MAX_PAID_STRING_LENGTH - winnings.toString().length; i++) {
+        paidStr += '0';
+    }
+    paid.text = paidStr + winnings.toString();
+}
+
 /* When this function is called it determines the betLine results. */
 //e.g. Bar - Orange - Banana
+function betString() {
+    moneyStr = '';
+    for (var i = 0; i < MAX_MONEY_STRING_LENGTH - playerMoney.toString().length; i++) {
+        moneyStr += '0';
+    }
+    moneyStr += playerMoney;
+
+    return moneyStr;
+}
 
 
 function spinReels() {
