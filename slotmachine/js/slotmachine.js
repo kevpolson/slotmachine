@@ -160,7 +160,7 @@ function initResetButton() {
     resetButton.y = RESET.Y;
     resetButton.addEventListener("click", handleClickReset);
     function handleClickReset(event) {
-        console.log('reset');
+        resetAll();
     }
 
     stage.addChild(resetButton);
@@ -215,6 +215,29 @@ function updateReels() {
     reel3Result.gotoAndPlay(spinResult[2]);
 }
 
+function updateMoney() {
+    moneyStr = '';
+    for (var i = 0; i < MAX_MONEY_STRING_LENGTH - playerMoney.toString().length; i++) {
+        moneyStr += '0';
+    }
+    money.text = moneyStr + playerMoney.toString();
+}
+
+function updateBet() {
+    betStr = '';
+    for (var i = 0; i < MAX_BET_STRING_LENGTH - playerBet.toString().length; i++) {
+        betStr += '0';
+    }
+    bet.text = betStr + playerBet.toString();
+}
+
+function updatePaid() {
+    paidStr = '';
+    for (var i = 0; i < MAX_PAID_STRING_LENGTH - winnings.toString().length; i++) {
+        paidStr += '0';
+    }
+    paid.text = paidStr + winnings.toString();
+}
 
 
 //functions for slotmachine
@@ -240,29 +263,13 @@ var winnings = 0;
 var jackpot = 5000;
 var playerBet = MIN_BET;
 
-function updateMoney() {
-    moneyStr = '';
-    for (var i = 0; i < MAX_MONEY_STRING_LENGTH - playerMoney.toString().length; i++) {
-        moneyStr += '0';
-    }
-    money.text = moneyStr + playerMoney.toString();
+function resetAll() {
+    playerMoney = 1000;
+    winnings = 0;
+    jackpot = 5000;
+    playerBet = MIN_BET;
 }
 
-function updateBet() {
-    betStr = '';
-    for (var i = 0; i < MAX_BET_STRING_LENGTH - playerBet.toString().length; i++) {
-        betStr += '0';
-    }
-    bet.text = betStr + playerBet.toString();
-}
-
-function updatePaid() {
-    paidStr = '';
-    for (var i = 0; i < MAX_PAID_STRING_LENGTH - winnings.toString().length; i++) {
-        paidStr += '0';
-    }
-    paid.text = paidStr + winnings.toString();
-}
 
 /* When this function is called it determines the betLine results. */
 //e.g. Bar - Orange - Banana
