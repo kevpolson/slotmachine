@@ -57,9 +57,14 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="img\betAdd.png" />
+    <Content Include="img\betMinus.png" />
+    <Content Include="img\payTable.png" />
+    <Content Include="img\reset.png" />
     <Content Include="img\slotmachine.png" />
     <Content Include="img\reel_icons.jpg" />
-    <Content Include="index - Copy.html" />
+    <Content Include="img\spin.png" />
+    <Content Include="index.bak.html" />
     <Content Include="js\createjs-2013.12.12.min.js" />
     <Content Include="js\slotmachine.js" />
     <Content Include="packages.config" />
