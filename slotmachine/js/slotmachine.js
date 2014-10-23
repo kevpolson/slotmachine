@@ -3,23 +3,25 @@
 var stage;
 var spinResult = ["seven", "seven", "seven"];
 
+//reel demensions
 var REEL = { WIDTH: 86, HEIGHT: 107 };
 
+//reel locations on slot machine
 var REEL1 = { X: 56, Y: 132 };
 var REEL2 = { X: 161, Y: 132 };
 var REEL3 = { X: 266, Y: 132 };
 
+//image locations on spritesheet
 var SEVEN = { X: 0, Y: 0 };
 var BLANK = { X: 95, Y: 0 };
 var GRAPE = { X: 190, Y: 0 };
-
 var LEMON = { X: 0, Y: 115 };
 var BANANA = { X: 95, Y: 115 };
-
 var CHERRY = { X: 0, Y: 230 };
 var BAR = { X: 95, Y: 230 };
 var ORANGE = { X: 190, Y: 230 };
 
+//reel variables
 var reelData = {
     images: ['img/reel_icons.jpg'],
     frames: [
@@ -30,7 +32,7 @@ var reelData = {
                 [CHERRY.X, CHERRY.Y, REEL.WIDTH, REEL.HEIGHT, 0, 0, 0],
                 [ORANGE.X, ORANGE.Y, REEL.WIDTH, REEL.HEIGHT, 0, 0, 0],
                 [BAR.X, BAR.Y, REEL.WIDTH, REEL.HEIGHT, 0, 0, 0],
-                [BLANK.X, BLANK.Y, REEL.WIDTH, REEL.HEIGHT, 0, 0, 0] //change to blank
+                [BLANK.X, BLANK.Y, REEL.WIDTH, REEL.HEIGHT, 0, 0, 0]
     ],
     animations: {
         seven: 0,
@@ -43,7 +45,12 @@ var reelData = {
         blank: 7
     }
 };
+var reelSheet;
+var reel1Result;
+var reel2Result;
+var reel3Result;
 
+//button locations
 var SPIN = { X: 320, Y: 340 };
 var RESET = { X: 34, Y: 343 }; 
 var PAY_TABLE = { X: 92, Y: 343 };
@@ -64,25 +71,28 @@ function handleTick(e) {
 }
 
 function start() {
-    updateSlotmachine();
-    updateSpinButton();
-    updateResetButton();
-    updatePayButton();
-    updateBetMinusButton();
-    updateBetAddButton();
+    initSlotmachine();
+    initReels();
+
+    initSpinButton();
+    initResetButton();
+    initPayButton();
+    initBetMinusButton();
+    initBetAddButton();
 }
 
-function updateSlotmachine() {
+function initSlotmachine() {
     var slotImage = 'img/slotmachine.png';
     var slotmachine = new createjs.Bitmap(slotImage);
     stage.addChild(slotmachine);
 }
 
-function updateReels() {
-    var reelSheet = new createjs.SpriteSheet(reelData);
-    var reel1Result = new createjs.Sprite(reelSheet, spinResult[0]);
-    var reel2Result = new createjs.Sprite(reelSheet, spinResult[1]);
-    var reel3Result = new createjs.Sprite(reelSheet, spinResult[2]);
+function initReels() {
+    reelSheet = new createjs.SpriteSheet(reelData);
+
+    reel1Result = new createjs.Sprite(reelSheet, spinResult[0]);
+    reel2Result = new createjs.Sprite(reelSheet, spinResult[1]);
+    reel3Result = new createjs.Sprite(reelSheet, spinResult[2]);
 
     reel1Result.x = REEL1.X;
     reel1Result.y = REEL1.Y;
@@ -93,21 +103,21 @@ function updateReels() {
     stage.addChild(reel1Result, reel2Result, reel3Result);
 }
 
-function updateSpinButton() {
+function initSpinButton() {
     var spinImage = 'img/spin.png';
     var spinButton = new createjs.Bitmap(spinImage);
     spinButton.x = SPIN.X;
     spinButton.y = SPIN.Y;
     spinButton.addEventListener("click", handleClickSpin);
     function handleClickSpin(event) {
-        spinResult = Reels();
+        spinResult = spinReels();
         console.log(spinResult[0] + ' ' + spinResult[1] + ' ' + spinResult[2]);
     }
 
     stage.addChild(spinButton);
 }
 
-function updateResetButton() {
+function initResetButton() {
     var resetImage = 'img/reset.png';
     var resetButton = new createjs.Bitmap(resetImage);
     resetButton.x = RESET.X;
@@ -120,7 +130,7 @@ function updateResetButton() {
     stage.addChild(resetButton);
 }
 
-function updatePayButton() {
+function initPayButton() {
     var payImage = 'img/payTable.png';
     var payButton = new createjs.Bitmap(payImage);
     payButton.x = PAY_TABLE.X;
@@ -133,7 +143,7 @@ function updatePayButton() {
     stage.addChild(payButton);
 }
 
-function updateBetMinusButton() {
+function initBetMinusButton() {
     var betMinusImage = 'img/betMinus.png';
     var betMinusButton = new createjs.Bitmap(betMinusImage);
     betMinusButton.x = BET_MINUS.X;
@@ -146,7 +156,7 @@ function updateBetMinusButton() {
     stage.addChild(betMinusButton);
 }
 
-function updateBetAddButton() {
+function initBetAddButton() {
     var betAddImage = 'img/betAdd.png';
     var betAddButton = new createjs.Bitmap(betAddImage);
     betAddButton.x = BET_ADD.X;
@@ -157,6 +167,12 @@ function updateBetAddButton() {
     }
 
     stage.addChild(betAddButton);
+}
+
+function updateReels() {
+    reel1Result.gotoAndPlay(spinResult[0]);
+    reel2Result.gotoAndPlay(spinResult[1]);
+    reel3Result.gotoAndPlay(spinResult[2]);
 }
 
 
@@ -174,7 +190,7 @@ var blanks = 0;
 //e.g. Bar - Orange - Banana
 
 
-function Reels() {
+function spinReels() {
     var betLine = [" ", " ", " "];
     var outCome = [0, 0, 0];
 
