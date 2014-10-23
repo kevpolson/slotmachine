@@ -231,5 +231,7 @@ $("#spinButton").click(function () {
     else {
         alert("Please enter a valid bet amount");
     }
-    
+
+
 });
+
