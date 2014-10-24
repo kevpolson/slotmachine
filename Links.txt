@@ -1,0 +1,5 @@
+Game:
+	http://studentweb.cencol.ca/kpolson
+
+Github:
+	http://github.com/kevpolson/Survival-Assignment1/

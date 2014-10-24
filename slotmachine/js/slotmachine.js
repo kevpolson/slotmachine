@@ -16,11 +16,19 @@ var MONEY = { X: 40, Y: 250 };
 var BET = { X: 175, Y: 250 };
 var PAID = { X: 250, Y: 250 };
 var HEADLINE = { X: 60, Y: 280 };
+var JACKPOT_TITLE = { X: 178, Y: 34 };
+var JACKPOT_TOTAL = { X: 19, Y: 45 };
+var JACKPOT_WON = { X: 100, Y: 45 };
 
 //text items
 var money;
 var bet;
 var paid;
+var jackpotTotal;
+var jackpotTitle;
+var jackpotWon;
+
+var wonJackpot = false;
 
 var MAX_JACKPOT_STRING_LENGTH = 14;
 var MAX_MONEY_STRING_LENGTH = 8;
@@ -139,12 +147,13 @@ function initReels() {
     reel3Result.y = REEL3.Y;
     stage.addChild(reel1Result, reel2Result, reel3Result);
 }
-var jackpotTotal;
-var jackpotTitle;
-var JACKPOT_TITLE = { X: 178, Y: 34 };
-var JACKPOT_TOTAL = { X: 19, Y: 45 };
+
 //initialize the money on the machine
 function initMoney() {
+    jackpotWon = new createjs.Text('JACKPOT!!', 'bold 44px Courier New', '#32CD32');
+    jackpotWon.x = JACKPOT_WON.X;
+    jackpotWon.y = JACKPOT_WON.Y;
+
     jackpotTitle = new createjs.Text('JACKPOT!!', 'bold 12px Courier New', '#ffffff');
     jackpotTitle.x = JACKPOT_TITLE.X;
     jackpotTitle.y = JACKPOT_TITLE.Y;
@@ -346,6 +355,12 @@ function resetAll() {
 /* When this function is called it determines the betLine results. */
 //e.g. Bar - Orange - Banana
 function spinReels() {
+    if (wonJackpot) {
+        wonJackpot = false;
+        stage.removeChild(jackpotWon);
+        stage.addChild(jackpotTotal);
+    }
+
     var betLine = [" ", " ", " "];
     var outCome = [0, 0, 0];
 
@@ -481,8 +496,12 @@ function checkJackPot() {
     var jackPotTry = Math.floor(Math.random() * 51 + 1);
     var jackPotWin = Math.floor(Math.random() * 51 + 1);
     if (jackPotTry == jackPotWin) {
-        alert("You Won the $" + jackpot + " Jackpot!!");
         playerMoney += jackpot;
+        winnings += jackpot;
         jackpot = 5000;
+        wonJackpot = true;
+
+        stage.removeChild(jackpotTotal);
+        stage.addChild(jackpotWon);
     }
 }
