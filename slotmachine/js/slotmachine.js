@@ -193,7 +193,7 @@ function initPayButton() {
     function handleClickPay(event) {
         var leave = confirm("Are you sure you wish to cash out and leave this HOT slot machine?");
         if (leave) {
-            window.close();
+            window.location.href = "vegas.html";
         }
     }
 
@@ -357,7 +357,7 @@ function resetFruitTally() {
     oranges = 0;
     cherries = 0;
     bars = 0;
-    bells = 0;
+    lemons = 0;
     sevens = 0;
     blanks = 0;
 }
@@ -391,7 +391,7 @@ function determineWinnings() {
         else if (bars == 3) {
             winnings = playerBet * 50;
         }
-        else if (bells == 3) {
+        else if (lemons == 3) {
             winnings = playerBet * 75;
         }
         else if (sevens == 3) {
@@ -412,7 +412,7 @@ function determineWinnings() {
         else if (bars == 2) {
             winnings = playerBet * 5;
         }
-        else if (bells == 2) {
+        else if (lemons == 2) {
             winnings = playerBet * 10;
         }
         else if (sevens == 2) {
