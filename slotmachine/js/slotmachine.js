@@ -22,6 +22,11 @@ var money;
 var bet;
 var paid;
 
+var MAX_JACKPOT_STRING_LENGTH = 14;
+var MAX_MONEY_STRING_LENGTH = 8;
+var MAX_PAID_STRING_LENGTH = 8;
+var MAX_BET_STRING_LENGTH = 4;
+
 //image locations on spritesheet
 var SEVEN = { X: 0, Y: 0 };
 var BLANK = { X: 95, Y: 0 };
@@ -61,6 +66,9 @@ var reel1Result;
 var reel2Result;
 var reel3Result;
 
+var spinButton;
+var noSpinButton;
+
 //button locations
 var SPIN = { X: 320, Y: 340 };
 var RESET = { X: 34, Y: 343 }; 
@@ -68,6 +76,7 @@ var PAY_TABLE = { X: 92, Y: 343 };
 var BET_MINUS = { X: 150, Y: 343 };
 var BET_ADD = { X: 208, Y: 343 };
 
+//initialize the game framework
 function init() {
     stage = new createjs.Stage(document.getElementById('slotmachine'));
     createjs.Ticker.addEventListener('tick', handleTick);
@@ -75,13 +84,14 @@ function init() {
     start();
 }
 
+//update method
 function handleTick(e) {
-    //update method
     updateReels();
 
     updateMoney();
     updateBet();
     updatePaid();
+    updateJackpot();
 
     if (playerBet > playerMoney) {
         disableSpinButton();
@@ -92,6 +102,7 @@ function handleTick(e) {
     stage.update();
 }
 
+//initialize all the components of the slotmachine
 function start() {
     initSlotmachine();
     initReels();
@@ -105,12 +116,14 @@ function start() {
     initBetAddButton();
 }
 
+//setup the slotmachine on screen
 function initSlotmachine() {
     var slotImage = 'img/slotmachine.png';
     var slotmachine = new createjs.Bitmap(slotImage);
     stage.addChild(slotmachine);
 }
 
+//setup the initial reels on screen
 function initReels() {
     reelSheet = new createjs.SpriteSheet(reelData);
 
@@ -126,8 +139,20 @@ function initReels() {
     reel3Result.y = REEL3.Y;
     stage.addChild(reel1Result, reel2Result, reel3Result);
 }
-
+var jackpotTotal;
+var jackpotTitle;
+var JACKPOT_TITLE = { X: 178, Y: 34 };
+var JACKPOT_TOTAL = { X: 19, Y: 45 };
+//initialize the money on the machine
 function initMoney() {
+    jackpotTitle = new createjs.Text('JACKPOT!!', 'bold 12px Courier New', '#ffffff');
+    jackpotTitle.x = JACKPOT_TITLE.X;
+    jackpotTitle.y = JACKPOT_TITLE.Y;
+
+    jackpotTotal = new createjs.Text('00000000000000', 'bold 44px Courier New', '#32CD32');
+    jackpotTotal.x = JACKPOT_TOTAL.X;
+    jackpotTotal.y = JACKPOT_TOTAL.Y;
+
     money = new createjs.Text('00000000', 'bold 25px Courier New', '#ff7700');
     money.x = MONEY.X;
     money.y = MONEY.Y;
@@ -144,11 +169,10 @@ function initMoney() {
     bet.x = BET.X;
     bet.y = BET.Y;
 
-    stage.addChild(money, bet, paid, headline);
+    stage.addChild(money, bet, paid, headline, jackpotTitle, jackpotTotal);
 }
 
-var spinButton;
-var noSpinButton;
+//initialize the spin button
 function initSpinButton() {
     var spinImage = 'img/spin.png';
     spinButton = new createjs.Bitmap(spinImage);
@@ -160,10 +184,9 @@ function initSpinButton() {
         console.log(spinResult[0] + ' ' + spinResult[1] + ' ' + spinResult[2]);
         determineWinnings();
     }
-
-    //stage.addChild(spinButton);
 }
 
+//initialize the disabled spin button
 function initNoSpinButton() {
     var noSpinImage = 'img/noSpin.png';
     noSpinButton = new createjs.Bitmap(noSpinImage);
@@ -171,6 +194,7 @@ function initNoSpinButton() {
     noSpinButton.y = SPIN.Y;
 }
 
+//initialize the reset game button
 function initResetButton() {
     var resetImage = 'img/reset.png';
     var resetButton = new createjs.Bitmap(resetImage);
@@ -184,6 +208,7 @@ function initResetButton() {
     stage.addChild(resetButton);
 }
 
+//initialize the pay out button
 function initPayButton() {
     var payImage = 'img/payTable.png';
     var payButton = new createjs.Bitmap(payImage);
@@ -200,6 +225,7 @@ function initPayButton() {
     stage.addChild(payButton);
 }
 
+//initialize the bet decrease button
 function initBetMinusButton() {
     var betMinusImage = 'img/betMinus.png';
     var betMinusButton = new createjs.Bitmap(betMinusImage);
@@ -215,6 +241,7 @@ function initBetMinusButton() {
     stage.addChild(betMinusButton);
 }
 
+//initialize the bet increase button
 function initBetAddButton() {
     var betAddImage = 'img/betAdd.png';
     var betAddButton = new createjs.Bitmap(betAddImage);
@@ -230,42 +257,57 @@ function initBetAddButton() {
     stage.addChild(betAddButton);
 }
 
+//this function changes the reels so that the images match the text
 function updateReels() {
     reel1Result.gotoAndPlay(spinResult[0]);
     reel2Result.gotoAndPlay(spinResult[1]);
     reel3Result.gotoAndPlay(spinResult[2]);
 }
 
+//this function updates the credits text
 function updateMoney() {
-    moneyStr = '';
+    var moneyStr = '';
     for (var i = 0; i < MAX_MONEY_STRING_LENGTH - playerMoney.toString().length; i++) {
         moneyStr += '0';
     }
     money.text = moneyStr + playerMoney.toString();
 }
 
+//this function updates the jackpot text
+function updateJackpot() {
+    var jackpotStr = '';
+    for (var i = 0; i < MAX_JACKPOT_STRING_LENGTH - jackpot.toString().length; i++) {
+        jackpotStr += '0';
+    }
+    jackpotTotal.text = jackpotStr + jackpot.toString();
+}
+
+//this function updates the bet text
 function updateBet() {
-    betStr = '';
+    var betStr = '';
     for (var i = 0; i < MAX_BET_STRING_LENGTH - playerBet.toString().length; i++) {
         betStr += '0';
     }
     bet.text = betStr + playerBet.toString();
 }
 
+//this function updates the winnings text
 function updatePaid() {
-    paidStr = '';
+    var paidStr = '';
     for (var i = 0; i < MAX_PAID_STRING_LENGTH - winnings.toString().length; i++) {
         paidStr += '0';
     }
     paid.text = paidStr + winnings.toString();
 }
 
+//this function removes the spin button with the click listener and add the disabled spin button 
 function disableSpinButton() {
     //spinButton.removeAllEventListeners();
     stage.removeChild(spinButton);
     stage.addChild(noSpinButton);
 }
 
+//this function removes the disabled spin button and add the spin button with the click listener
 function enableSpinButton() {
     stage.removeChild(noSpinButton);
     stage.addChild(spinButton);
@@ -282,10 +324,6 @@ var lemons = 0;
 var sevens = 0;
 var blanks = 0;
 
-var MAX_MONEY_STRING_LENGTH = 8;
-var MAX_PAID_STRING_LENGTH = 8;
-var MAX_BET_STRING_LENGTH = 4;
-
 var MAX_BET = 1000;
 var MIN_BET = 10;
 var BET_INCREMENT = 10;
@@ -295,6 +333,7 @@ var winnings = 0;
 var jackpot = 5000;
 var playerBet = MIN_BET;
 
+//reset the game to defaults
 function resetAll() {
     spinResult = ["seven", "seven", "seven"];
     playerMoney = 1000;
